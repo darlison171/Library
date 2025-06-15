@@ -1,42 +1,66 @@
--- Carregar a Luna UI Library
-local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/main/source.lua"))()
+-- Carregar WindUI (base da UI moderna)
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/WindUI.lua"))()
 
--- Criar a janela
-local Window = Luna:CreateWindow("Nexus Hub", Vector2.new(500, 400), Enum.KeyCode.RightControl)
+-- Criar janela principal
+local Window = WindUI:CreateWindow("🌌 Nexus Hub", Color3.fromRGB(135, 0, 255))
 
--- Criar as abas
-local MainTab = Window:CreateTab("Main")
-local FarmTab = Window:CreateTab("Auto Farm")
-local PlayerTab = Window:CreateTab("Player")
-local VisualTab = Window:CreateTab("Visual")
-local TeleportTab = Window:CreateTab("Teleport")
-local ConfigTab = Window:CreateTab("Config")
+-- Criar abas
+local AutoTab = Window:CreateTab("🌱 Auto")
+local ToolsTab = Window:CreateTab("🛠️ Ferramentas")
+local ConfigTab = Window:CreateTab("⚙️ Config")
 
--- Adicionar Toggles e Botões de Exemplo
-MainTab:AddLabel("Bem-vindo ao Nexus Hub!")
-MainTab:AddButton("Exemplo de Botão", function()
-    print("Botão clicado!")
+-- Definir URL do script externo
+local ScriptURL = "https://pastebin.com/raw/PaDr9Evs"
+loadstring(game:HttpGet(ScriptURL))() -- Carrega o script
+
+-- Auto: funções principais
+AutoTab:AddToggle("Auto Plant", false, function(state)
+    getgenv().AutoPlant = state
 end)
 
-FarmTab:AddToggle("Auto Farm Ativado", false, function(value)
-    print("Auto Farm:", value)
+AutoTab:AddToggle("Auto Harvest", false, function(state)
+    getgenv().AutoHarvest = state
 end)
 
-PlayerTab:AddSlider("Velocidade do Jogador", 16, 100, function(value)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+AutoTab:AddToggle("Auto Water", false, function(state)
+    getgenv().AutoWater = state
 end)
 
-VisualTab:AddToggle("ESP Ativado", false, function(value)
-    print("ESP:", value)
+AutoTab:AddToggle("Auto Sell", false, function(state)
+    getgenv().AutoSell = state
 end)
 
-TeleportTab:AddButton("Ir para o Spawn", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
+-- Ferramentas adicionais
+ToolsTab:AddButton("🔄 Recarregar Script", function()
+    loadstring(game:HttpGet(ScriptURL))()
 end)
 
-ConfigTab:AddKeybind("Abrir/Fechar UI", Enum.KeyCode.RightControl, function()
+ToolsTab:AddToggle("Mostrar Nome dos Mobs", false, function(state)
+    getgenv().ShowMobs = state
+end)
+
+-- Configuração e controle da UI
+ConfigTab:AddButton("🔽 Minimizar", function()
     Window:Toggle()
 end)
 
--- UI ativada
-print("Nexus Hub carregado com sucesso!")
+ConfigTab:AddButton("❌ Fechar", function()
+    Window:Close()
+end)
+
+-- Criar botão flutuante para reabrir a UI
+local FloatingButton = Instance.new("TextButton")
+FloatingButton.Text = "🧩"
+FloatingButton.Size = UDim2.new(0, 40, 0, 40)
+FloatingButton.Position = UDim2.new(0, 20, 0.5, -20)
+FloatingButton.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
+FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatingButton.TextScaled = true
+FloatingButton.Draggable = true
+FloatingButton.Active = true
+FloatingButton.BorderSizePixel = 0
+FloatingButton.Parent = game:GetService("CoreGui")
+
+FloatingButton.MouseButton1Click:Connect(function()
+    Window:Toggle()
+end)
