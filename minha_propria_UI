@@ -1,0 +1,166 @@
+--// UI Nexus Hub (feito do zero, estilo Rayfield)
+local NexusUI = Instance.new("ScreenGui")
+local OpenBtn = Instance.new("TextButton")
+local MainFrame = Instance.new("Frame")
+local TopBar = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local CloseBtn = Instance.new("TextButton")
+local TabHolder = Instance.new("Frame")
+local ContentFrame = Instance.new("Frame")
+
+NexusUI.Name = "NexusHub"
+NexusUI.ResetOnSpawn = false
+NexusUI.Parent = game:GetService("CoreGui")
+
+-- Botão flutuante para abrir UI
+OpenBtn.Name = "OpenBtn"
+OpenBtn.Text = "⚙"
+OpenBtn.Size = UDim2.new(0, 45, 0, 45)
+OpenBtn.Position = UDim2.new(0, 10, 0.5, -22)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(40, 0, 70)
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenBtn.Font = Enum.Font.GothamBlack
+OpenBtn.TextScaled = true
+OpenBtn.ZIndex = 10
+OpenBtn.Parent = NexusUI
+
+-- Janela principal
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 550, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -275, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = NexusUI
+
+-- Topo da UI
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.BackgroundColor3 = Color3.fromRGB(40, 0, 70)
+TopBar.Parent = MainFrame
+
+Title.Name = "Title"
+Title.Text = "Nexus Hub"
+Title.Size = UDim2.new(1, -80, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextScaled = true
+Title.Parent = TopBar
+
+CloseBtn.Name = "CloseBtn"
+CloseBtn.Text = "✕"
+CloseBtn.Size = UDim2.new(0, 40, 1, 0)
+CloseBtn.Position = UDim2.new(1, -45, 0, 0)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 40)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextScaled = true
+CloseBtn.Parent = TopBar
+
+-- Abas laterais
+TabHolder.Name = "TabHolder"
+TabHolder.Size = UDim2.new(0, 120, 1, -40)
+TabHolder.Position = UDim2.new(0, 0, 0, 40)
+TabHolder.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabHolder.Parent = MainFrame
+
+-- Área de conteúdo
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -120, 1, -40)
+ContentFrame.Position = UDim2.new(0, 120, 0, 40)
+ContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ContentFrame.Parent = MainFrame
+
+-- Funções de abrir/fechar
+OpenBtn.MouseButton1Click:Connect(function()
+	MainFrame.Visible = true
+	OpenBtn.Visible = false
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+	MainFrame.Visible = false
+	OpenBtn.Visible = true
+end)
+-- Função para criar abas
+local function CreateTab(tabName, callback)
+	local TabButton = Instance.new("TextButton")
+	TabButton.Text = tabName
+	TabButton.Size = UDim2.new(1, 0, 0, 40)
+	TabButton.BackgroundColor3 = Color3.fromRGB(45, 0, 70)
+	TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TabButton.Font = Enum.Font.Gotham
+	TabButton.TextScaled = true
+	TabButton.Parent = TabHolder
+
+	TabButton.MouseButton1Click:Connect(function()
+		for _, v in pairs(ContentFrame:GetChildren()) do
+			if v:IsA("GuiObject") then v:Destroy() end
+		end
+		callback(ContentFrame)
+	end)
+end
+
+-- Criar as abas
+CreateTab("Auto Farm", function(parent)
+	local txt = Instance.new("TextLabel")
+	txt.Text = "⚙️ Auto Farm Config"
+	txt.Size = UDim2.new(1, 0, 0, 50)
+	txt.Position = UDim2.new(0, 0, 0, 10)
+	txt.BackgroundTransparency = 1
+	txt.TextColor3 = Color3.fromRGB(255,255,255)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
+	txt.Parent = parent
+end)
+
+CreateTab("Config", function(parent)
+	local txt = Instance.new("TextLabel")
+	txt.Text = "🛠️ Configurações"
+	txt.Size = UDim2.new(1, 0, 0, 50)
+	txt.Position = UDim2.new(0, 0, 0, 10)
+	txt.BackgroundTransparency = 1
+	txt.TextColor3 = Color3.fromRGB(255,255,255)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
+	txt.Parent = parent
+end)
+
+CreateTab("Itens", function(parent)
+	local txt = Instance.new("TextLabel")
+	txt.Text = "📦 Itens e Coleta"
+	txt.Size = UDim2.new(1, 0, 0, 50)
+	txt.Position = UDim2.new(0, 0, 0, 10)
+	txt.BackgroundTransparency = 1
+	txt.TextColor3 = Color3.fromRGB(255,255,255)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
+	txt.Parent = parent
+end)
+
+CreateTab("Misc", function(parent)
+	local txt = Instance.new("TextLabel")
+	txt.Text = "🌀 Outros Scripts"
+	txt.Size = UDim2.new(1, 0, 0, 50)
+	txt.Position = UDim2.new(0, 0, 0, 10)
+	txt.BackgroundTransparency = 1
+	txt.TextColor3 = Color3.fromRGB(255,255,255)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
+	txt.Parent = parent
+end)
+
+CreateTab("Player", function(parent)
+	local txt = Instance.new("TextLabel")
+	txt.Text = "👤 Player Settings"
+	txt.Size = UDim2.new(1, 0, 0, 50)
+	txt.Position = UDim2.new(0, 0, 0, 10)
+	txt.BackgroundTransparency = 1
+	txt.TextColor3 = Color3.fromRGB(255,255,255)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
+	txt.Parent = parent
+end)
