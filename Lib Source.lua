@@ -1,35 +1,61 @@
 local Player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+-- Criar GUI
 local Gui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
 Gui.Name = "DARLhubUI"
 Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+Gui.ResetOnSpawn = false
 
 -- Main Frame
 local Main = Instance.new("Frame", Gui)
 Main.Name = "Main"
-Main.Size = UDim2.new(0, 600, 0, 350)
-Main.Position = UDim2.new(0.5, -300, 0.5, -175)
+Main.Size = UDim2.new(0, 480, 0, 300)
+Main.Position = UDim2.new(0.25, 0, 0.2, 0)
 Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Main.BorderSizePixel = 0
-Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.AnchorPoint = Vector2.new(0, 0)
 
-local UICorner = Instance.new("UICorner", Main)
-UICorner.CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
--- Title Bar
+-- Título
 local Top = Instance.new("Frame", Main)
 Top.Name = "Top"
 Top.Size = UDim2.new(1, 0, 0, 35)
 Top.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
 local Title = Instance.new("TextLabel", Top)
-Title.Size = UDim2.new(1, 0, 1, 0)
+Title.Size = UDim2.new(1, -35, 1, 0)
+Title.Position = UDim2.new(0, 0, 0, 0)
 Title.Text = "⚔️ DARLhub - Blox Fruits"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.BackgroundTransparency = 1
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 16
+Title.TextScaled = true
+Title.TextXAlignment = Enum.TextXAlignment.Center
 
--- Tabs (Lateral)
+-- BOTÃO DE MINIMIZAR
+local MinimizeBtn = Instance.new("TextButton", Top)
+MinimizeBtn.Size = UDim2.new(0, 35, 1, 0)
+MinimizeBtn.Position = UDim2.new(1, -35, 0, 0)
+MinimizeBtn.Text = "-"
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.TextSize = 20
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(50, 0, 80)
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 8)
+
+local isMinimized = false
+MinimizeBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	for _, child in pairs(Main:GetChildren()) do
+		if child ~= Top then
+			child.Visible = not isMinimized
+		end
+	end
+end)
+
+-- Aba Lateral
 local Tabs = Instance.new("Frame", Main)
 Tabs.Name = "Tabs"
 Tabs.Position = UDim2.new(0, 0, 0, 35)
@@ -37,14 +63,37 @@ Tabs.Size = UDim2.new(0, 120, 1, -35)
 Tabs.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Instance.new("UICorner", Tabs).CornerRadius = UDim.new(0, 8)
 
--- Main Panel
+-- Painel de conteúdo
 local Panel = Instance.new("Frame", Main)
 Panel.Name = "Panel"
 Panel.Position = UDim2.new(0, 120, 0, 35)
 Panel.Size = UDim2.new(1, -120, 1, -35)
 Panel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 
--- Função de criação de botão de aba
+-- Drag
+local dragging, dragInput, dragStart, startPos
+Top.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Main.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then dragging = false end
+		end)
+	end
+end)
+Top.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+UIS.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+-- Sistema de abas
 local currentTab = nil
 function CreateTab(name, callback)
 	local btn = Instance.new("TextButton", Tabs)
@@ -60,7 +109,6 @@ function CreateTab(name, callback)
 	end)
 end
 
--- Função para criar uma página de conteúdo
 function CreatePage()
 	for _, v in ipairs(Panel:GetChildren()) do
 		if v:IsA("Frame") then v:Destroy() end
@@ -72,7 +120,6 @@ function CreatePage()
 	return Page
 end
 
--- Função de toggle
 function CreateToggle(parent, name, callback)
 	local Toggle = Instance.new("TextButton", parent)
 	Toggle.Size = UDim2.new(0, 200, 0, 30)
@@ -92,31 +139,23 @@ function CreateToggle(parent, name, callback)
 end
 
 -- ABA: Auto Farm
-CreateTab("🌾 Auto Farm", function()
+CreateTab("🌾 Farm", function()
 	local page = CreatePage()
 	CreateToggle(page, "Auto Farm", function(state)
 		_G.AutoFarm = state
 		while _G.AutoFarm do
 			task.wait()
-			-- auto farm code
+			-- código do farm
 		end
-	end)
-	CreateToggle(page, "Farm Mastery", function(state)
-		_G.FarmMastery = state
 	end)
 end)
 
 -- ABA: Teleporte
 CreateTab("🧭 Teleporte", function()
 	local page = CreatePage()
-	CreateToggle(page, "Teleport Ilha 1", function(state)
+	CreateToggle(page, "Ir para Ilha 1", function(state)
 		if state then
 			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(100, 20, -50)
-		end
-	end)
-	CreateToggle(page, "Teleport Ilha 2", function(state)
-		if state then
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(500, 50, 600)
 		end
 	end)
 end)
