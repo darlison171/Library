@@ -174,3 +174,63 @@ CreateTab("⚙️ Extras", function()
 		end
 	end)
 end)
+-- DraggableModule.lua (ou no final do seu script mesmo)
+function makeDraggable(frame)
+	local UIS = game:GetService("UserInputService")
+	local dragging, dragInput, dragStart, startPos
+
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+end
+-- Botão flutuante para esconder/mostrar o Main
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Name = "ToggleDARLhub"
+ToggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ToggleButton.AnchorPoint = Vector2.new(0, 0)
+ToggleButton.Position = UDim2.new(0, 10, 0, 10) -- canto superior esquerdo
+ToggleButton.Size = UDim2.new(0, 120, 0, 35)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 0, 60)
+ToggleButton.Text = "📂 DARLhub"
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextSize = 14
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.AutoButtonColor = true
+
+local UICorner = Instance.new("UICorner", ToggleButton)
+UICorner.CornerRadius = UDim.new(0, 8)
+
+-- Mostrar/Esconder
+local isVisible = true
+ToggleButton.MouseButton1Click:Connect(function()
+	isVisible = not isVisible
+	Main.Visible = isVisible
+end)
