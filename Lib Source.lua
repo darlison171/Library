@@ -1,21 +1,31 @@
-local library = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ShaddowScripts/Main/main/Library"))()
+-- Carregar a Rayfield UI
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
 
-local window = library:CreateWindow("Nexus Test")
+-- Criar a janela principal
+local Janela = Rayfield:CreateWindow({
+    Name = "💪 Muscle Legends - Teste de UI",
+    LoadingTitle = "Iniciando UI...",
+    LoadingSubtitle = "Aguarde...",
+    ConfigurationSaving = {
+        Enabled = false
+    },
+    KeySystem = false
+})
 
-local mainTab = window:CreateTab("Main")
+-- Criar uma aba
+local Aba = Janela:CreateTab("Principal", 4483362458)
 
-mainTab:CreateToggle("Auto Farm", false, function(state)
-	print("Auto Farm:", state)
-end)
+-- Criar uma seção e botão de teste
+Aba:CreateSection("Teste de Botão")
 
-mainTab:CreateToggle("Auto PowerUp", false, function(state)
-	print("Auto PowerUp:", state)
-end)
-
-mainTab:CreateToggle("Hitbox 50", false, function(state)
-	print("Hitbox:", state)
-end)
-
-mainTab:CreateButton("Créditos", function()
-	print("Feito por Darlison :)")
-end)
+Aba:CreateButton({
+    Name = "Clique para testar",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Sucesso!",
+            Content = "A UI está funcionando perfeitamente!",
+            Duration = 4,
+            Image = 4483362458
+        })
+    end
+})
